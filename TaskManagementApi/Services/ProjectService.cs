@@ -29,7 +29,7 @@ namespace TaskManagementApi.Services
             return projectModel;
         }
 
-        public async Task<Project?> UpdateProjectAsync(int id, UpdateProjectRequestDTO projectDTO)
+        public async Task<Project?> UpdateProjectAsync(int id, Project projectModel)
         {
             var existingProject = await _context.Projects.FirstOrDefaultAsync(p => p.Id == id);
             if (existingProject is null)
@@ -37,9 +37,9 @@ namespace TaskManagementApi.Services
                 return null;
             }
 
-            existingProject.Name = projectDTO.Name;
-            existingProject.Description = projectDTO.Description;
-            existingProject.DueDate = projectDTO.DueDate;
+            existingProject.Name = projectModel.Name;
+            existingProject.Description = projectModel.Description;
+            existingProject.DueDate = projectModel.DueDate;
 
             await _context.SaveChangesAsync();
 

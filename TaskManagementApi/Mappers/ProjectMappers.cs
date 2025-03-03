@@ -26,5 +26,15 @@ namespace TaskManagementApi.Mappers
                 DueDate = projectDTO.DueDate
             };
         }
+
+        public static Project ToProjectFromUpdateDTO(this UpdateProjectRequestDTO projectDTO)
+        {
+            return new Project
+            {
+                Name = projectDTO.Name,
+                Description = projectDTO.Description,
+                DueDate = projectDTO.DueDate
+            };
+        }
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace TaskManagementApi.Entities
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace TaskManagementApi.Entities
 {
-    public class User
+    public class User : IdentityUser
     {
         public Guid Id { get; set; }
         public string Username { get; set; } = string.Empty;

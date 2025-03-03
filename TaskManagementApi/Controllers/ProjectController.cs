@@ -16,6 +16,11 @@ namespace TaskManagementApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProjects()
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var projects = await _projectService.GetAllProjectsAsync();
                 
             var projectDTO = projects.Select(s => s.ToProjectDTO());
@@ -23,9 +28,14 @@ namespace TaskManagementApi.Controllers
             return Ok(projects);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetProjectById([FromRoute] int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var project = await _projectService.GetProjectByIdAsync(id);
             if (project is null)
             {
@@ -37,30 +47,45 @@ namespace TaskManagementApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProject([FromBody] CreateProjectRequestDTO projectDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var projectModel = projectDTO.ToProjectFromCreateDTO();
             await _projectService.CreateProjectAsync(projectModel);
             return CreatedAtAction(nameof(GetProjectById), new { id = projectModel.Id }, projectModel.ToProjectDTO());
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateProject([FromRoute] int id, [FromBody] UpdateProjectRequestDTO projectDTO)
         {
-            var projectModel = await _projectService.UpdateProjectAsync(id, projectDTO);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var projectModel = await _projectService.UpdateProjectAsync(id, projectDTO.ToProjectFromUpdateDTO());
             if (projectModel is null)
             {
-                return NotFound();
+                return NotFound("Project not found.");
             }
 
             return Ok(projectModel.ToProjectDTO());
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteProject([FromRoute] int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var projectModel = await _projectService.DeleteProjectAsync(id);
             if (projectModel is null)
             {
-                return NotFound();
+                return NotFound("Project does not exist.");
             }
 
             return NoContent();
