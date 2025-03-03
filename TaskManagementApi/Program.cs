@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using System.Text;
 using TaskManagementApi.Data;
+using TaskManagementApi.Entities;
 using TaskManagementApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,21 +26,37 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 builder.Services.AddDbContext<AppDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TaskManagementSystemDatabase")));
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme =
+    options.DefaultChallengeScheme =
+    options.DefaultForbidScheme =
+    options.DefaultScheme =
+    options.DefaultSignInScheme =
+    options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = builder.Configuration["AppSettings:Issuer"],
+            ValidIssuer = builder.Configuration["JWT:Issuer"],
             ValidateAudience = true,
-            ValidAudience = builder.Configuration["AppSettings:Audience"],
+            ValidAudience = builder.Configuration["JWT:Audience"],
             ValidateLifetime = true,
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Token"]!)),
+                Encoding.UTF8.GetBytes(builder.Configuration["JWT:Token"]!)),
             ValidateIssuerSigningKey = true
         };
     });
+
+builder.Services.AddIdentity<AppUser, IdentityRole>(option =>
+{
+    option.Password.RequireDigit = true;
+    option.Password.RequireLowercase = true;
+    option.Password.RequireUppercase = true;
+    option.Password.RequireNonAlphanumeric = true;
+    option.Password.RequiredLength = 12;
+}).AddEntityFrameworkStores<AppDBContext>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
@@ -55,6 +73,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
