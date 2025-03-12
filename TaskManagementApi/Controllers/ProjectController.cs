@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TaskManagementApi.Data;
 using TaskManagementApi.DTOs.Project;
 using TaskManagementApi.Interfaces;
@@ -14,6 +15,7 @@ namespace TaskManagementApi.Controllers
         private readonly IProjectRepository _projectService = projectService;
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetProjects()
         {
             if (!ModelState.IsValid)

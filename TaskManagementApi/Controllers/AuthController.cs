@@ -11,14 +11,18 @@ using TaskManagementApi.Entities;
 using TaskManagementApi.DTOs.User;
 using TaskManagementApi.DTOs.Token;
 using TaskManagementApi.DTOs.Auth;
+using TaskManagementApi.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace TaskManagementApi.Controllers
 {
     [Route("api/auth")]
     [ApiController]
-    public class AuthController(UserManager<AppUser> userManager) : ControllerBase
+    public class AuthController(UserManager<AppUser> userManager, ITokenService tokenService, SignInManager<AppUser> signInManager) : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager = userManager;
+        private readonly ITokenService _tokenService = tokenService;
+        private readonly SignInManager<AppUser> _signInManager = signInManager;
 
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register([FromBody] RegisterDTO registerDTO)
@@ -43,7 +47,14 @@ namespace TaskManagementApi.Controllers
                     var roleResult = await _userManager.AddToRoleAsync(appUser, "User");
                     if (roleResult.Succeeded)
                     {
-                        return Ok("User created");
+                        return Ok(
+                            new NewUserDTO
+                            {
+                                UserName = appUser.UserName,
+                                Email = appUser.Email,
+                                Token = _tokenService.CreateToken(appUser)
+                            }
+                        );
                     } 
                     else
                     {
@@ -61,17 +72,37 @@ namespace TaskManagementApi.Controllers
             }
         }
 
-        //[HttpPost("login")]
-        //public async Task<ActionResult<TokenResponseDTO>> Login(UserDTO request)
-        //{
-        //    var result = await _authService.LoginAsync(request);
-        //    if (result is null)
-        //    {
-        //        return BadRequest("Invalid username or password.");
-        //    }
+        [HttpPost("login")]
+        public async Task<ActionResult<TokenResponseDTO>> Login(LoginDTO loginDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-        //    return Ok(result);
-        //}
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == loginDTO.UserName.ToLower());
+
+            if (user is null)
+            {
+                return Unauthorized("Invalid username!");
+            }
+
+            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDTO.Password, false);
+
+            if (!result.Succeeded)
+            {
+                return Unauthorized("Username and/or password incorrect");
+            }
+
+            return Ok(
+                    new NewUserDTO
+                    {
+                        UserName = user.UserName,
+                        Email = user.Email,
+                        Token = _tokenService.CreateToken(user)
+                    }
+            );
+        }
 
         //[HttpPost("refresh-token")]
         //public async Task<ActionResult<TokenResponseDTO>> RefreshToken(RefreshTokenRequestDTO request)
