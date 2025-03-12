@@ -1,78 +1,6 @@
 [
   {
     "ContainingType": "TaskManagementApi.Controllers.AuthController",
-    "Method": "AuthenticatedOnlyEndpoint",
-    "RelativePath": "api/auth",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "TaskManagementApi.Controllers.AuthController",
-    "Method": "AdminOnlyOnlyEndpoint",
-    "RelativePath": "api/auth/admin-only",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "TaskManagementApi.Controllers.AuthController",
-    "Method": "Login",
-    "RelativePath": "api/auth/login",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "request",
-        "Type": "TaskManagementApi.DTOs.User.UserDTO",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "TaskManagementApi.DTOs.Token.TokenResponseDTO",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "TaskManagementApi.Controllers.AuthController",
-    "Method": "RefreshToken",
-    "RelativePath": "api/auth/refresh-token",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "request",
-        "Type": "TaskManagementApi.DTOs.Token.RefreshTokenRequestDTO",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "TaskManagementApi.DTOs.Token.TokenResponseDTO",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "TaskManagementApi.Controllers.AuthController",
     "Method": "Register",
     "RelativePath": "api/auth/register",
     "HttpMethod": "POST",
@@ -80,8 +8,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "request",
-        "Type": "TaskManagementApi.DTOs.User.UserDTO",
+        "Name": "registerDTO",
+        "Type": "TaskManagementApi.DTOs.Auth.RegisterDTO",
         "IsRequired": true
       }
     ],

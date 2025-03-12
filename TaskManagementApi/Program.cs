@@ -58,7 +58,7 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(option =>
     option.Password.RequiredLength = 12;
 }).AddEntityFrameworkStores<AppDBContext>();
 
-builder.Services.AddScoped<IAuthService, AuthService>();
+//builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
 

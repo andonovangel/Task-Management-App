@@ -11,63 +11,93 @@ using TaskManagementApi.Entities;
 using TaskManagementApi.Services;
 using TaskManagementApi.DTOs.User;
 using TaskManagementApi.DTOs.Token;
+using TaskManagementApi.DTOs.Auth;
 
 namespace TaskManagementApi.Controllers
 {
     [Route("api/auth")]
     [ApiController]
-    public class AuthController(IAuthService authService) : ControllerBase
+    public class AuthController(UserManager<AppUser> userManager) : ControllerBase
     {
-        private readonly IAuthService _authService = authService;
+        private readonly UserManager<AppUser> _userManager = userManager;
 
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(UserDTO request)
+        public async Task<ActionResult<User>> Register([FromBody] RegisterDTO registerDTO)
         {
-            var user = await _authService.RegisterAsync(request);
-            if (user is null)
+            try
             {
-                return BadRequest("Username already exists.");
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var appUser = new AppUser
+                {
+                    UserName = registerDTO.Username,
+                    Email = registerDTO.Email
+                };
+
+                var createdUser = await _userManager.CreateAsync(appUser, registerDTO.Password);
+
+                if (createdUser.Succeeded)
+                {
+                    var roleResult = await _userManager.AddToRoleAsync(appUser, "User");
+                    if (roleResult.Succeeded)
+                    {
+                        return Ok("User created");
+                    } 
+                    else
+                    {
+                        return StatusCode(500, roleResult.Errors);
+                    }
+                }
+                else
+                {
+                    return StatusCode(500, createdUser.Errors);
+                }
             }
-
-            return Ok(user);
-        }
-
-        [HttpPost("login")]
-        public async Task<ActionResult<TokenResponseDTO>> Login(UserDTO request)
-        {
-            var result = await _authService.LoginAsync(request);
-            if (result is null)
+            catch (Exception e)
             {
-                return BadRequest("Invalid username or password.");
+                return StatusCode(500, e);
             }
-
-            return Ok(result);
         }
 
-        [HttpPost("refresh-token")]
-        public async Task<ActionResult<TokenResponseDTO>> RefreshToken(RefreshTokenRequestDTO request)
-        {
-            var result = await _authService.RefreshTokensAsync(request);
-            if (result is null || result.AccessToken is null || result.RefreshToken is null)
-            {
-                return Unauthorized("Invalid refresh token.");
-            }
+        //[HttpPost("login")]
+        //public async Task<ActionResult<TokenResponseDTO>> Login(UserDTO request)
+        //{
+        //    var result = await _authService.LoginAsync(request);
+        //    if (result is null)
+        //    {
+        //        return BadRequest("Invalid username or password.");
+        //    }
 
-            return Ok(result);
-        }
+        //    return Ok(result);
+        //}
 
-        [Authorize]
-        [HttpGet]
-        public IActionResult AuthenticatedOnlyEndpoint()
-        {
-            return Ok("You are authenticated");
-        }
+        //[HttpPost("refresh-token")]
+        //public async Task<ActionResult<TokenResponseDTO>> RefreshToken(RefreshTokenRequestDTO request)
+        //{
+        //    var result = await _authService.RefreshTokensAsync(request);
+        //    if (result is null || result.AccessToken is null || result.RefreshToken is null)
+        //    {
+        //        return Unauthorized("Invalid refresh token.");
+        //    }
 
-        [Authorize(Roles = "Admin")]
-        [HttpGet("admin-only")]
-        public IActionResult AdminOnlyOnlyEndpoint()
-        {
-            return Ok("You are an admin");
-        }
+        //    return Ok(result);
+        //}
+
+        //[Authorize]
+        //[HttpGet]
+        //public IActionResult AuthenticatedOnlyEndpoint()
+        //{
+        //    return Ok("You are authenticated");
+        //}
+
+        //[Authorize(Roles = "Admin")]
+        //[HttpGet("admin-only")]
+        //public IActionResult AdminOnlyOnlyEndpoint()
+        //{
+        //    return Ok("You are an admin");
+        //}
     }
 }
