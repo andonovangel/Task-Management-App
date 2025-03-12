@@ -8,7 +8,6 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using TaskManagementApi.Entities;
-using TaskManagementApi.Services;
 using TaskManagementApi.DTOs.User;
 using TaskManagementApi.DTOs.Token;
 using TaskManagementApi.DTOs.Auth;

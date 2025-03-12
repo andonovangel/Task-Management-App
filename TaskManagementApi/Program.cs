@@ -7,7 +7,8 @@ using Scalar.AspNetCore;
 using System.Text;
 using TaskManagementApi.Data;
 using TaskManagementApi.Entities;
-using TaskManagementApi.Services;
+using TaskManagementApi.Interfaces;
+using TaskManagementApi.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,8 +60,8 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(option =>
 }).AddEntityFrameworkStores<AppDBContext>();
 
 //builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IProjectService, ProjectService>();
-builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 
 var app = builder.Build();
 

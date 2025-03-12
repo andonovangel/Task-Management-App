@@ -1,9 +1,9 @@
 ﻿using TaskManagementApi.Entities;
 using TaskManagementApi.DTOs.Project;
 
-namespace TaskManagementApi.Services
+namespace TaskManagementApi.Interfaces
 {
-    public interface IProjectService
+    public interface IProjectRepository
     {
         Task<List<Project>> GetAllProjectsAsync();
         Task<Project?> GetProjectByIdAsync(int id);

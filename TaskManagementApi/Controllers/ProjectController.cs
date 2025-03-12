@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TaskManagementApi.Data;
 using TaskManagementApi.DTOs.Project;
+using TaskManagementApi.Interfaces;
 using TaskManagementApi.Mappers;
-using TaskManagementApi.Services;
 
 namespace TaskManagementApi.Controllers
 {
     [Route("api/project")]
     [ApiController]
-    public class ProjectController(AppDBContext context, IProjectService projectService) : Controller
+    public class ProjectController(AppDBContext context, IProjectRepository projectService) : Controller
     {
         private readonly AppDBContext _cotnext = context;
-        private readonly IProjectService _projectService = projectService;
+        private readonly IProjectRepository _projectService = projectService;
 
         [HttpGet]
         public async Task<IActionResult> GetProjects()

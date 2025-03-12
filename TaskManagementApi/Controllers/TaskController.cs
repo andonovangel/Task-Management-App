@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TaskManagementApi.DTOs.Task;
 using TaskManagementApi.Helpers;
+using TaskManagementApi.Interfaces;
 using TaskManagementApi.Mappers;
-using TaskManagementApi.Services;
 
 namespace TaskManagementApi.Controllers
 {
     [Route("api/task")]
     [ApiController]
-    public class TaskController(ITaskService taskService, IProjectService projectService) : ControllerBase
+    public class TaskController(ITaskRepository taskService, IProjectRepository projectService) : ControllerBase
     {
-        private readonly ITaskService _taskService = taskService;
-        private readonly IProjectService _projectService = projectService;
+        private readonly ITaskRepository _taskService = taskService;
+        private readonly IProjectRepository _projectService = projectService;
 
 
         [HttpGet]

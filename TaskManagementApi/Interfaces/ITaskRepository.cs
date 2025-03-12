@@ -2,9 +2,9 @@
 using TaskManagementApi.Entities;
 using TaskManagementApi.Helpers;
 
-namespace TaskManagementApi.Services
+namespace TaskManagementApi.Interfaces
 {
-    public interface ITaskService
+    public interface ITaskRepository
     {
         Task<List<ProjectTask>> GetAllTasksAsync(QueryObject query);
         Task<ProjectTask?> GetTaskByIdAsync(int id);

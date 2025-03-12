@@ -4,10 +4,11 @@ using TaskManagementApi.Data;
 using TaskManagementApi.Entities;
 using TaskManagementApi.DTOs.Project;
 using Microsoft.AspNetCore.Mvc;
+using TaskManagementApi.Interfaces;
 
-namespace TaskManagementApi.Services
+namespace TaskManagementApi.Repositories
 {
-    public class ProjectService(AppDBContext context) : IProjectService
+    public class ProjectRepository(AppDBContext context) : IProjectRepository
     {
         private readonly AppDBContext _context = context;
 

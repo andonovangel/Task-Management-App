@@ -3,10 +3,11 @@ using TaskManagementApi.Data;
 using TaskManagementApi.DTOs.Task;
 using TaskManagementApi.Entities;
 using TaskManagementApi.Helpers;
+using TaskManagementApi.Interfaces;
 
-namespace TaskManagementApi.Services
+namespace TaskManagementApi.Repositories
 {
-    public class TaskService(AppDBContext context) : ITaskService
+    public class TaskRepository(AppDBContext context) : ITaskRepository
     {
         public required AppDBContext _context = context;
 
